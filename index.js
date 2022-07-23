@@ -38,7 +38,6 @@ export class SnakeGame {
     };
     this.snakeBody = [];
     this.targets = [];
-    this.action = null;
   }
 
   init() {
@@ -60,6 +59,13 @@ export class SnakeGame {
           }
         });
         this.BTN.addEventListener("touchend", () => this.newGame());
+      } else {
+        this.BTN.addEventListener("mouseup", () => this.newGame());
+
+        window.addEventListener("keydown", (e) => {
+          console.log("first");
+          this.mobileKeyPress(e.code);
+        }); 
       }
 
       this.CNVS.width = this.CNVS_WRAPPER.getBoundingClientRect().width;
@@ -68,20 +74,15 @@ export class SnakeGame {
       this.sizeOfSqVisible = this.sizeOfSq - 2;
     });
 
-    this.BTN.addEventListener("click", () => this.newGame());    
+       
 
     this.snakeBody.push(
       this.makeSnakePiece(this.snakeHeadPos.x, this.snakeHeadPos.y)
     );
 
-    window.addEventListener("keydown", (e) => {
-      console.log("first");
-      this.mobileKeyPress(e.code);
-    });
-
     window.dispatchEvent(new Event("resize"));
     this.drawingAll();
-    this.action = setTimeout(
+    window.timeOutNumber = setTimeout(
       this.gameAction.bind(this),
       Math.floor(1000 / this.gameSpeed)
     );
@@ -134,15 +135,15 @@ export class SnakeGame {
       }
     }
 
-    /*   if (
+      if (
       this.snakeHeadPos.x < 0 ||
       this.snakeHeadPos.x > 20 ||
       this.snakeHeadPos.y < 0 ||
       this.snakeHeadPos.y > 20
     ) {
       console.log("here2");
-      endGame();
-    } */
+      this.endGame();
+    }
 
     if (this.snakeHeadPos.x > 20) this.snakeHeadPos.x = 0;
     if (this.snakeHeadPos.x < 0) this.snakeHeadPos.x = 20;
@@ -150,9 +151,9 @@ export class SnakeGame {
     if (this.snakeHeadPos.y < 0) this.snakeHeadPos.y = 20;
 
     if (!this.gameOver) {
-      console.log("11111");
+      //console.log(window.timeOutNumber);
       this.drawingAll();
-      this.action = setTimeout(
+      window.timeOutNumber = setTimeout(
         this.gameAction.bind(this),
         Math.floor(1000 / this.gameSpeed)
       );
@@ -182,9 +183,10 @@ export class SnakeGame {
     );
   }
 
-  endGame() {
+  endGame() {    
     this.gameOver = true;
     this.MODAl.style.display = "flex";
+    clearTimeout(window.timeOutNumber);
   }
 
   drawingAll() {
@@ -220,11 +222,6 @@ export class SnakeGame {
   mobileKeyPress(code) {
     console.log("second");
     if (this.preventAction) return;
-    if (this.gameOver) {
-      if (code === "Enter") {
-        this.newGame();
-      } else return;
-    }
     this.preventAction = true;
     if (code === this.snakeDirection.prevECode) return;
     if (this.snakeDirection.prevECode === this.snakeDirection.reverse[code])
@@ -256,25 +253,17 @@ export class SnakeGame {
   }
 
   newGame() {
+    console.log('newGame');
     this.MODAl.style.display = "none";
-
     this.score = 0;
     this.preventAction = false;
     this.gameOver = false;
     this.gameStarted = false;
     this.gameSpeed = 5;
     this.message = "Press any arrow button to start the game.";
-    this.snakeDirection = {
-      prevECode: null,
-      x: 0,
-      y: 0,
-      reverse: {
-        ArrowUp: "ArrowDown",
-        ArrowDown: "ArrowUp",
-        ArrowRight: "ArrowLeft",
-        ArrowLeft: "ArrowRight",
-      },
-    };
+    this.snakeDirection.x = 0;
+    this.snakeDirection.y = 0;
+    this.snakeDirection.prevECode = null;
     this.snakeHeadPos = {
       x: 10,
       y: 10,
@@ -286,9 +275,8 @@ export class SnakeGame {
       this.makeSnakePiece(this.snakeHeadPos.x, this.snakeHeadPos.y)
     );
 
-    window.dispatchEvent(new Event("resize"));
     this.drawingAll();
-    this.action = setTimeout(
+    window.timeOutNumber= setTimeout(
       this.gameAction.bind(this),
       Math.floor(1000 / this.gameSpeed)
     );
