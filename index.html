@@ -4,6 +4,66 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module">
+      const mobileDetection = {
+        Android: function () {
+          return navigator.userAgent.match(/Android/i);
+        },
+        BlackBerry: function () {
+          return navigator.userAgent.match(/BlackBerry/i);
+        },
+        iOS: function () {
+          return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+        },
+        Opera: function () {
+          return navigator.userAgent.match(/Opera Mini/i);
+        },
+        Windows: function () {
+          return navigator.userAgent.match(/IEMobile/i);
+        },
+        any: function () {
+          return (
+            this.Android() ||
+            this.BlackBerry() ||
+            this.iOS() ||
+            this.Opera() ||
+            this.Windows()
+          );
+        },
+      };
+      let isMobile = mobileDetection.any();
+      const cssPromises = {};
+      function loadResourse(src) {
+        if (src.endsWith(".js")) return import(src);
+        if (src.endsWith(".css")) {
+          if (!cssPromises[src]) {
+            const LINK = document.createElement("link");
+            LINK.rel = "stylesheet";
+            LINK.href = src;
+            cssPromises[src] = new Promise((resolve) => {
+              LINK.addEventListener("load", () => resolve());
+            });
+            document.head.append(LINK);
+          }
+          return cssPromises[src];
+        }
+      }
+
+      function endOfLoadAndPlay(game) {
+        game.init();
+        document.querySelector('.loadscreen').style.display = 'none';
+      }
+
+      (async function () {
+        const MODULE = await loadResourse("./index.js");
+        const GAME = new MODULE.SnakeGame(isMobile);
+        if (isMobile) {
+          loadResourse("./mobileStyle.css").then(() => endOfLoadAndPlay(GAME));
+        } else {
+          loadResourse("./desktopStyle.css").then(() => endOfLoadAndPlay(GAME));
+        }
+      })();
+    </script>
     <style>
       * {
         box-sizing: border-box;
@@ -98,282 +158,27 @@
         display: flex;
         justify-content: center;
       }
-    </style>
-    <style id="mobile">
-      .keyboard {
+
+      .loadscreen {
         display: flex;
-        flex-direction: column;
         justify-content: center;
-        margin: auto;
-        font-size: 200%;
-      }
-
-      .keyboard button {
-        width: 5rem;
-        height: 5rem;
-      }
-
-      .up-btn {
-        transform: rotate(-90deg);
-      }
-
-      /*       .right-btn {
-
-      }
-       */
-      .down-btn {
-        transform: rotate(90deg);
-      }
-
-      .left-btn {
-        margin-right: 5rem;
-        transform: rotate(180deg);
-      }
-
-      @media screen and (orientation: landscape) {
-        .main {
-          display: flex;
-          flex-direction: row;
-          justify-content: space-around;
-          width: 100%;
-          height: 100%;
-          margin: 0;
-        }
-
-        .canvas-wrapper {
-          width: 840px;
-          height: 840px;
-        }
-
-        @media screen and (max-height: 768px) {
-          .canvas-wrapper {
-            width: 630px;
-            height: 630px;
-          }
-        }
-
-        @media screen and (max-height: 425px) {
-          .canvas-wrapper {
-            width: 378px;
-            height: 378px;
-          }
-        }
-
-        @media screen and (max-height: 375px) {
-          .canvas-wrapper {
-            width: 357px;
-            height: 357px;
-          }
-        }
-
-        @media screen and (max-height: 320px) {
-          .canvas-wrapper {
-            width: 294px;
-            height: 294px;
-          }
-        }
-      }
-
-      @media screen and (orientation: portrait) {
-        .main {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          height: 100%;
-          margin: 0;
-        }
-
-        .keyboard {
-          margin-top: 20%;
-        }
-
-        .canvas-wrapper {
-          width: 840px;
-          height: 840px;
-        }
-
-        @media screen and (max-width: 768px) {
-          .canvas-wrapper {
-            width: 630px;
-            height: 630px;
-          }
-        }
-
-        @media screen and (max-width: 425px) {
-          .canvas-wrapper {
-            width: 378px;
-            height: 378px;
-          }
-        }
-
-        @media screen and (max-width: 375px) {
-          .canvas-wrapper {
-            width: 357px;
-            height: 357px;
-          }
-        }
-
-        @media screen and (max-width: 320px) {
-          .canvas-wrapper {
-            width: 294px;
-            height: 294px;
-          }
-        }
-      }
-    </style>
-    <style id="desktop">
-      .main {
-        display: block;
+        align-content: center;
+        align-items: center;
+        background-color: #282a31;
+        margin: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
         width: 100%;
         height: 100%;
-        margin: 0;
-        padding: 0;
+        z-index: 10;
       }
 
       .keyboard {
         display: none;
       }
 
-      .button:active {
-        transform: scale(0.9);
-      }
-
-      @media screen and (orientation: landscape) {
-        .canvas-wrapper {
-          width: 2100px;
-          height: 2100px;
-        }
-
-        @media screen and (max-height: 2048px) {
-          .canvas-wrapper {
-            width: 1680px;
-            height: 1680px;
-          }
-        }
-
-        @media screen and (max-height: 1600px) {
-          .canvas-wrapper {
-            width: 1365px;
-            height: 1365px;
-          }
-        }
-
-        @media screen and (max-height: 1400px) {
-          .canvas-wrapper {
-            width: 945px;
-            height: 945px;
-          }
-        }
-
-        @media screen and (max-height: 1080px) {
-          .canvas-wrapper {
-            width: 840px;
-            height: 840px;
-          }
-        }
-
-        @media screen and (max-height: 900px) {
-          .canvas-wrapper {
-            width: 630px;
-            height: 630px;
-          }
-        }
-
-        @media screen and (max-height: 720px) {
-          .canvas-wrapper {
-            width: calc(100vh - 20px);
-            height: calc(100vh - 20px);
-          }
-        }
-      }
-
-      @media screen and (orientation: portrait) {
-        .canvas-wrapper {
-          width: 2100px;
-          height: 2100px;
-        }
-
-        @media screen and (max-width: 2048px) {
-          .canvas-wrapper {
-            width: 1680px;
-            height: 1680px;
-          }
-        }
-
-        @media screen and (max-width: 1600px) {
-          .canvas-wrapper {
-            width: 1365px;
-            height: 1365px;
-          }
-        }
-
-        @media screen and (max-width: 1400px) {
-          .canvas-wrapper {
-            width: 945px;
-            height: 945px;
-          }
-        }
-
-        @media screen and (max-width: 1080px) {
-          .canvas-wrapper {
-            width: 840px;
-            height: 840px;
-          }
-        }
-
-        @media screen and (max-width: 900px) {
-          .canvas-wrapper {
-            width: 630px;
-            height: 630px;
-          }
-        }
-
-        @media screen and (max-width: 720px) {
-          .canvas-wrapper {
-            width: calc(100vw - 20px);
-            height: calc(100vw - 20px);
-          }
-        }
-      }
     </style>
-<!--     <script defer src="./index.js"></script> -->
-    <script type="module">
-
-      const mobileDetection = {
-        Android: function () {
-          return navigator.userAgent.match(/Android/i);
-        },
-        BlackBerry: function () {
-          return navigator.userAgent.match(/BlackBerry/i);
-        },
-        iOS: function () {
-          return navigator.userAgent.match(/iPhone|iPad|iPod/i);
-        },
-        Opera: function () {
-          return navigator.userAgent.match(/Opera Mini/i);
-        },
-        Windows: function () {
-          return navigator.userAgent.match(/IEMobile/i);
-        },
-        any: function () {
-          return (
-            this.Android() ||
-            this.BlackBerry() ||
-            this.iOS() ||
-            this.Opera() ||
-            this.Windows()
-          );
-        },
-      };
-
-      let isMobile = mobileDetection.any();
-
-      import { SnakeGame } from "./index.js";
-
-      const GAME = new SnakeGame(isMobile);
-      GAME.init();
-
-    </script>
     <title>Document</title>
   </head>
   <body>
@@ -384,21 +189,21 @@
       </div>
       <div class="keyboard">
         <div class="up-button-place">
-          <button id="ArrowUp" class="button up-btn">
-            <img src="./right-arrow-svgrepo-com.svg" alt="🠡">
+          <button id="ArrowUp" class="button upBtn">
+            <img src="./right-arrow-svgrepo-com.svg" alt="🠡" />
           </button>
         </div>
         <div class="left-right-button-place">
-          <button id="ArrowLeft" class="button left-btn">
-            <img src="./right-arrow-svgrepo-com.svg" alt="🠠">
+          <button id="ArrowLeft" class="button leftBtn">
+            <img src="./right-arrow-svgrepo-com.svg" alt="🠠" />
           </button>
-          <button id="ArrowRight" class="button right-btn">
-            <img src="./right-arrow-svgrepo-com.svg" alt="➝">
+          <button id="ArrowRight" class="button rightBtn">
+            <img src="./right-arrow-svgrepo-com.svg" alt="➝" />
           </button>
         </div>
         <div class="down-button-place">
-          <button id="ArrowDown" class="button down-btn">
-            <img src="./right-arrow-svgrepo-com.svg" alt="🠣">
+          <button id="ArrowDown" class="button downBtn">
+            <img src="./right-arrow-svgrepo-com.svg" alt="🠣" />
           </button>
         </div>
       </div>
@@ -407,6 +212,9 @@
       <button class="button modal-button">
         Game over!<br />Want to try again?
       </button>
+    </div>
+    <div class="loadscreen">
+      <h3 class="loadscreen__title">Loading...</h3>
     </div>
   </body>
 </html>
