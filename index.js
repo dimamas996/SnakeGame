@@ -45,16 +45,21 @@ export class SnakeGame {
     window.addEventListener("resize", () => {
       if (this.isMobile) {
         Array.from(document.querySelectorAll("button")).forEach((btn) => {
-          let property = btn.className.replaceAll("button ", "");
-          btn.addEventListener("touchstart", () => {
-            btn.style.opacity = "0.7";
-            btn.style.transform = `${this.buttonStylesInfo[property]} scale(0.9)`;
-          });
-          btn.addEventListener("touchend", () => {
-            btn.style.opacity = "1";
-            btn.style.transform = `${this.buttonStylesInfo[property]} scale(1)`;
-          });
+          if (!btn.classList.contains("modal-button")) {
+            let property = btn.className.replaceAll("button ", "");
+            btn.addEventListener("touchstart", (e) => {
+              e.preventDefault();
+              this.mobileKeyPress(btn.id);
+              btn.style.opacity = "0.7";
+              btn.style.transform = `${this.buttonStylesInfo[property]} scale(0.9)`;
+            });
+            btn.addEventListener("touchend", () => {
+              btn.style.opacity = "1";
+              btn.style.transform = `${this.buttonStylesInfo[property]} scale(1)`;
+            });
+          }
         });
+        this.BTN.addEventListener("touchend", () => this.newGame());
       }
 
       this.CNVS.width = this.CNVS_WRAPPER.getBoundingClientRect().width;
@@ -63,20 +68,11 @@ export class SnakeGame {
       this.sizeOfSqVisible = this.sizeOfSq - 2;
     });
 
-    this.BTN.addEventListener("click", () => this.newGame());
-    this.BTN.addEventListener("touchend", () => this.newGame());
+    this.BTN.addEventListener("click", () => this.newGame());    
 
     this.snakeBody.push(
       this.makeSnakePiece(this.snakeHeadPos.x, this.snakeHeadPos.y)
     );
-
-    for (let btn of document.querySelectorAll(".button")) {
-      if (!btn.classList.contains("modal-button")) {
-        btn.addEventListener("click", () => {
-          this.mobileKeyPress(btn.id);
-        });
-      }
-    }
 
     window.addEventListener("keydown", (e) => {
       console.log("first");
@@ -107,7 +103,10 @@ export class SnakeGame {
       }
 
       for (let piece of this.snakeBody) {
-        if (piece.x === this.snakeHeadPos.x && piece.y === this.snakeHeadPos.y ) {
+        if (
+          piece.x === this.snakeHeadPos.x &&
+          piece.y === this.snakeHeadPos.y
+        ) {
           console.log("here1");
           this.endGame();
           break;
@@ -115,7 +114,7 @@ export class SnakeGame {
 
         if (target) {
           if (piece.x === target.x && piece.y === target.y) target = null;
-        }        
+        }
       }
 
       if (target) this.targets.push(target);
@@ -222,7 +221,7 @@ export class SnakeGame {
     console.log("second");
     if (this.preventAction) return;
     if (this.gameOver) {
-      if (code === 'Enter') {
+      if (code === "Enter") {
         this.newGame();
       } else return;
     }
