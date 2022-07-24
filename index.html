@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="module">
-      window.timeOutNumber = null;
       const mobileDetection = {
         Android: function () {
           return navigator.userAgent.match(/Android/i);
@@ -72,7 +71,7 @@
         color: #c4b9b6; /*#282A31 #6F6878 #C4B9B6 #998F07 #35361D*/
       }
 
-      body {
+      html, body {
         background-color: #282a31;
         margin: 0;
       }
@@ -81,6 +80,15 @@
         margin: 1vh 0 2vh 0;
         padding: 0;
         text-align: center;
+      }
+
+      p {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        color: white;
       }
 
       .canvas-wrapper {
@@ -95,6 +103,7 @@
       }
 
       .modal {
+        background-color: #282a31;
         z-index: 10;
         position: absolute;
         left: 0;
@@ -115,13 +124,13 @@
       }
 
       .button {
-        min-width: 42px;
-        min-height: 42px;
+/*         min-width: 42px;
+        min-height: 42px; */
         background-color: #fc4a4a;
         border: 0;
         border-radius: 15px;
         color: white;
-        font-size: 160%;
+        font-size: 180%;
         display: flex;
         justify-content: center;
         align-content: center;
@@ -143,21 +152,6 @@
         height: 100%;
         margin: 0;
         padding: 0;
-      }
-
-      .left-right-button-place {
-        display: flex;
-        justify-content: space-around;
-      }
-
-      .up-button-place {
-        display: flex;
-        justify-content: center;
-      }
-
-      .down-button-place {
-        display: flex;
-        justify-content: center;
       }
 
       .loadscreen {
@@ -190,29 +184,17 @@
       </div>
       <div class="keyboard">
         <div class="up-button-place">
-          <button id="ArrowUp" class="button upBtn">
-            <img src="./right-arrow-svgrepo-com.svg" alt="🠡" />
-          </button>
+          <button id="ArrowUp" class="button upBtn"><p class="arrowsText">🠡</p></button>
         </div>
-        <div class="left-right-button-place">
-          <button id="ArrowLeft" class="button leftBtn">
-            <img src="./right-arrow-svgrepo-com.svg" alt="🠠" />
-          </button>
-          <button id="ArrowRight" class="button rightBtn">
-            <img src="./right-arrow-svgrepo-com.svg" alt="➝" />
-          </button>
-        </div>
-        <div class="down-button-place">
-          <button id="ArrowDown" class="button downBtn">
-            <img src="./right-arrow-svgrepo-com.svg" alt="🠣" />
-          </button>
+        <div class="left-right-down-button-place">
+          <button id="ArrowLeft" class="button leftBtn"><p class="arrowsText">🠠</p></button>
+          <button id="ArrowDown" class="button downBtn"><p class="arrowsText">🠣</p></button>
+          <button id="ArrowRight" class="button rightBtn"><p class="arrowsText">➝</p></button>
         </div>
       </div>
     </div>
     <div class="modal">
-      <button class="button modal-button">
-        Game over!<br />Want to try again?
-      </button>
+      <button class="button modal-button">Press here to start a new game!</button>
     </div>
     <div class="loadscreen">
       <h3 class="loadscreen__title">Loading...</h3>
