@@ -41,33 +41,34 @@ export class SnakeGame {
   }
 
   init() {
+
+    if (this.isMobile) {
+      Array.from(document.querySelectorAll("button")).forEach((btn) => {
+        if (!btn.classList.contains("modal-button")) {
+          let property = btn.className.replaceAll("button ", "");
+          btn.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            this.mobileKeyPress(btn.id);
+            btn.style.opacity = "0.7";
+            btn.style.transform = `${this.buttonStylesInfo[property]} scale(0.9)`;
+          });
+          btn.addEventListener("touchend", () => {
+            btn.style.opacity = "1";
+            btn.style.transform = `${this.buttonStylesInfo[property]} scale(1)`;
+          });
+        }
+      });
+      this.BTN.addEventListener("touchend", () => this.newGame());
+    } else {
+      this.BTN.addEventListener("mouseup", () => this.newGame());
+
+      window.addEventListener("keydown", (e) => {
+        console.log("first");
+        this.mobileKeyPress(e.code);
+      }); 
+    }
+
     window.addEventListener("resize", () => {
-      if (this.isMobile) {
-        Array.from(document.querySelectorAll("button")).forEach((btn) => {
-          if (!btn.classList.contains("modal-button")) {
-            let property = btn.className.replaceAll("button ", "");
-            btn.addEventListener("touchstart", (e) => {
-              e.preventDefault();
-              this.mobileKeyPress(btn.id);
-              btn.style.opacity = "0.7";
-              btn.style.transform = `${this.buttonStylesInfo[property]} scale(0.9)`;
-            });
-            btn.addEventListener("touchend", () => {
-              btn.style.opacity = "1";
-              btn.style.transform = `${this.buttonStylesInfo[property]} scale(1)`;
-            });
-          }
-        });
-        this.BTN.addEventListener("touchend", () => this.newGame());
-      } else {
-        this.BTN.addEventListener("mouseup", () => this.newGame());
-
-        window.addEventListener("keydown", (e) => {
-          console.log("first");
-          this.mobileKeyPress(e.code);
-        }); 
-      }
-
       this.CNVS.width = this.CNVS_WRAPPER.getBoundingClientRect().width;
       this.CNVS.height = this.CNVS_WRAPPER.getBoundingClientRect().height;
       this.sizeOfSq = this.CNVS.width / this.quantityOfSqInRow;
