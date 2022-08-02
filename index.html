@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
     <script type="module">
       const mobileDetection = {
         Android: function () {
@@ -32,169 +33,33 @@
         },
       };
       let isMobile = mobileDetection.any();
-      const cssPromises = {};
-      function loadResourse(src) {
-        if (src.endsWith(".js")) return import(src);
-        if (src.endsWith(".css")) {
-          if (!cssPromises[src]) {
-            const LINK = document.createElement("link");
-            LINK.rel = "stylesheet";
-            LINK.href = src;
-            cssPromises[src] = new Promise((resolve) => {
-              LINK.addEventListener("load", () => resolve());
-            });
-            document.head.append(LINK);
-          }
-          return cssPromises[src];
-        }
+      import { SnakeGame } from "./index.js";
+      let GAME = null;
+      if (isMobile) {
+        import("./swiped-events.js").then(() => {
+          GAME = new SnakeGame(true);
+          GAME.init();
+          document.querySelector(".loadscreen").style.display = 'none';
+        }); 
+      } else {
+        GAME = new SnakeGame(false);
+        GAME.init();
+        document.querySelector(".loadscreen").style.display = 'none';
       }
-
-      function endOfLoadAndPlay(game) {
-        game.init();
-        document.querySelector('.loadscreen').style.display = 'none';
-      }
-
-      (async function () {
-        const MODULE = await loadResourse("./index.js");
-        const GAME = new MODULE.SnakeGame(isMobile);
-        if (isMobile) {
-          loadResourse("./mobileStyle.css").then(() => endOfLoadAndPlay(GAME));
-        } else {
-          loadResourse("./desktopStyle.css").then(() => endOfLoadAndPlay(GAME));
-        }
-      })();
     </script>
-    <style>
-      * {
-        box-sizing: border-box;
-        font-family: Arial, Helvetica, sans-serif;
-        color: #c4b9b6; /*#282A31 #6F6878 #C4B9B6 #998F07 #35361D*/
-      }
-
-      html, body {
-        background-color: #282a31;
-        margin: 0;
-      }
-
-      h1 {
-        margin: 1vh 0 2vh 0;
-        padding: 0;
-        text-align: center;
-      }
-
-      p {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        color: white;
-      }
-
-      .canvas-wrapper {
-        margin: auto;
-        padding: 0;
-        box-shadow: 0px 0px 50px 5px #6f6878;
-      }
-
-      .canvas {
-        margin: 0;
-        padding: 0;
-      }
-
-      .modal {
-        background-color: #282a31;
-        z-index: 10;
-        position: absolute;
-        left: 0;
-        top: 0;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        margin: 0;
-        width: 100%;
-        height: 100%;
-      }
-
-      img {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-      }
-
-      .button {
-/*         min-width: 42px;
-        min-height: 42px; */
-        background-color: #fc4a4a;
-        border: 0;
-        border-radius: 15px;
-        color: white;
-        font-size: 180%;
-        display: flex;
-        justify-content: center;
-        align-content: center;
-        align-items: center;
-      }
-
-      .modal-button {
-        min-width: 25%;
-        min-height: 15%;
-      }
-
-      .button:hover {
-        opacity: 0.7;
-      }
-
-      .main {
-        display: block;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-      .loadscreen {
-        display: flex;
-        justify-content: center;
-        align-content: center;
-        align-items: center;
-        background-color: #282a31;
-        margin: 0;
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 10;
-      }
-
-      .keyboard {
-        display: none;
-      }
-
-    </style>
     <title>Document</title>
   </head>
-  <body>
+  <body data-swipe-threshold="10" data-swipe-timeout="150" data-swipe-ignore="false">
     <h1>Snake</h1>
     <div class="main">
       <div class="canvas-wrapper">
         <canvas class="canvas"></canvas>
       </div>
-      <div class="keyboard">
-        <div class="up-button-place">
-          <button id="ArrowUp" class="button upBtn"><p class="arrowsText">&#8593;</p></button>
-        </div>
-        <div class="left-right-down-button-place">
-          <button id="ArrowLeft" class="button leftBtn"><p class="arrowsText">&#8592;</p></button>
-          <button id="ArrowDown" class="button downBtn"><p class="arrowsText">&#8595;</p></button>
-          <button id="ArrowRight" class="button rightBtn"><p class="arrowsText">&#8594;</p></button>
-        </div>
-      </div>
     </div>
     <div class="modal">
-      <button class="button modal-button">Press here to start a new game!</button>
+      <button class="button modal-button">
+        Press here to start a new game!
+      </button>
     </div>
     <div class="loadscreen">
       <h3 class="loadscreen__title">Loading...</h3>

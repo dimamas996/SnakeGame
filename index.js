@@ -3,11 +3,12 @@ export class SnakeGame {
     this.isMobile = isMobile;
     this.CNVS = document.querySelector(".canvas");
     this.CNVS_WRAPPER = document.querySelector(".canvas-wrapper");
+    this.MAIN = document.querySelector(".main");
     this.CTX = this.CNVS.getContext("2d");
     this.MODAl = document.querySelector(".modal");
     this.BTN = document.querySelector(".modal-button");
     this.sizeOfSq = 0;
-    this.quantityOfSqInRow = 21;
+    this.quantityOfSqInRow = 23;
     this.sizeOfSqVisible = 0;
     this.score = 0;
     this.currentAction = null;
@@ -15,7 +16,10 @@ export class SnakeGame {
     this.gameStarted = false;
     this.action = null;
     this.gameSpeed = 7;
-    this.message = "Press any arrow button to start the game.";
+    this.message = this.isMobile
+      ? "Swipe in any direction to start the game."
+      : "Press any arrow button to start the game.";
+    this.title = "SNAKE GAME";
     this.snakeDirection = {
       prevECode: null,
       x: 0,
@@ -28,8 +32,8 @@ export class SnakeGame {
       },
     };
     this.snakeHeadPos = {
-      x: 10,
-      y: 10,
+      x: Math.floor(this.quantityOfSqInRow / 2),
+      y: Math.floor(this.quantityOfSqInRow / 2),
     };
     this.snakeBody = [];
     this.targets = [];
@@ -37,6 +41,21 @@ export class SnakeGame {
 
   init() {
     window.addEventListener("resize", () => {
+      let length = 0;
+      if (window.screen.orientation.type === "landscape-primary") {
+        length = this.MAIN.getBoundingClientRect().height;
+      } else {
+        length = this.MAIN.getBoundingClientRect().width;
+      }
+
+      length =
+        length -
+        length * 0.06 -
+        ((length - length * 0.06) % this.quantityOfSqInRow);
+
+      this.CNVS_WRAPPER.style.width = `${length}px`;
+      this.CNVS_WRAPPER.style.height = `${length}px`;
+
       this.CNVS.width = this.CNVS_WRAPPER.getBoundingClientRect().width;
       this.CNVS.height = this.CNVS_WRAPPER.getBoundingClientRect().height;
       this.sizeOfSq = this.CNVS.width / this.quantityOfSqInRow;
@@ -44,21 +63,26 @@ export class SnakeGame {
     });
 
     if (this.isMobile) {
-      Array.from(document.querySelectorAll("button")).forEach((btn) => {
-        if (!btn.classList.contains("modal-button")) {
-          btn.addEventListener("touchstart", (e) => {
-            e.preventDefault();
-            this.keyPress(btn.id);
-            btn.style.opacity = "0.7";
-            btn.style.transform = `scale(0.9)`;
-          });
-          btn.addEventListener("touchend", () => {
-            btn.style.opacity = "1";
-            btn.style.transform = `scale(1)`;
-          });
+      document.body.addEventListener('swiped', (e) => {
+        let swipeDirection = {
+          up: "ArrowUp",
+          down: "ArrowDown",
+          left: "ArrowLeft",
+          right: "ArrowRight",          
         }
+
+        this.keyPress(swipeDirection[e.detail.dir]);
       });
-      this.BTN.addEventListener("touchend", () => this.newGame());
+
+      this.BTN.addEventListener("touchstart", () => {
+        this.BTN.style.opacity = 0.7;
+        this.BTN.style.transform = "scale(0.9)";
+      });
+      this.BTN.addEventListener("touchend", () => {
+        this.BTN.style.opacity = 1;
+        this.BTN.style.transform = "scale(1)";
+        this.newGame();
+      });
     } else {
       this.BTN.addEventListener("mouseup", () => this.newGame());
 
@@ -120,17 +144,21 @@ export class SnakeGame {
 
     if (
       this.snakeHeadPos.x < 0 ||
-      this.snakeHeadPos.x > 20 ||
+      this.snakeHeadPos.x > this.quantityOfSqInRow - 1 ||
       this.snakeHeadPos.y < 0 ||
-      this.snakeHeadPos.y > 20
+      this.snakeHeadPos.y > this.quantityOfSqInRow - 1
     ) {
       this.endGame("walltrike");
     }
 
-    if (this.snakeHeadPos.x > 20) this.snakeHeadPos.x = 0;
-    if (this.snakeHeadPos.x < 0) this.snakeHeadPos.x = 20;
-    if (this.snakeHeadPos.y > 20) this.snakeHeadPos.y = 0;
-    if (this.snakeHeadPos.y < 0) this.snakeHeadPos.y = 20;
+    if (this.snakeHeadPos.x > this.quantityOfSqInRow - 1)
+      this.snakeHeadPos.x = 0;
+    if (this.snakeHeadPos.x < 0)
+      this.snakeHeadPos.x = this.quantityOfSqInRow - 1;
+    if (this.snakeHeadPos.y > this.quantityOfSqInRow - 1)
+      this.snakeHeadPos.y = 0;
+    if (this.snakeHeadPos.y < 0)
+      this.snakeHeadPos.y = this.quantityOfSqInRow - 1;
   }
 
   speedChange() {
@@ -155,8 +183,8 @@ export class SnakeGame {
 
   makeTarget() {
     return {
-      x: Math.floor(Math.random() * 19 + 1),
-      y: Math.floor(Math.random() * 19 + 1),
+      x: Math.floor(Math.random() * (this.quantityOfSqInRow - 2) + 1),
+      y: Math.floor(Math.random() * (this.quantityOfSqInRow - 2) + 1),
     };
   }
 
@@ -175,7 +203,7 @@ export class SnakeGame {
     this.gameOver = true;
     clearInterval(this.action);
     this.MODAl.style.display = "flex";
-    this.BTN.innerText = `Your score is ${this.score}. Tap here to start a new game.`;
+    this.BTN.innerHTML = `Your score is ${this.score}.<br>Tap here to start a new game.`;
   }
 
   startGame() {
@@ -207,13 +235,18 @@ export class SnakeGame {
       this.CNVS.height * 0.05
     );
 
-    this.CTX.fillStyle = "#c4b9b6";
-    this.CTX.font = `${this.sizeOfSq}px Arial`;
+    this.CTX.textAlign = "center";
+    this.CTX.fillText(
+      `${this.title}`,
+      this.CNVS.width / 2,
+      this.CNVS.height * 0.35
+    );
+
     this.CTX.textAlign = "center";
     this.CTX.fillText(
       `${this.message}`,
       this.CNVS.width / 2,
-      this.CNVS.height * 0.35
+      this.CNVS.height * 0.65
     );
 
     requestAnimationFrame(this.animation.bind(this));
@@ -235,6 +268,7 @@ export class SnakeGame {
       this.startGame();
       this.gameStarted = true;
       this.message = "";
+      this.title = "";
     } else {
       switch (code) {
         case "ArrowUp":
@@ -243,36 +277,22 @@ export class SnakeGame {
         case "ArrowLeft":
           this.currentAction = code;
           break;
+        case "Enter":
+          if (this.MODAl.style.display === "flex") {
+            this.newGame();
+          }
+          break;
         default:
           return;
       }
     }
-    /*     if (code === this.snakeDirection.prevECode) return;
-    if (this.snakeDirection.prevECode === this.snakeDirection.reverse[code])
-      return;
-    switch (code) {
-      case "ArrowUp":
-        this.currentAction = code;
-        break;
-      case "ArrowRight":
-        this.currentAction = code;
-        break;
-      case "ArrowDown":
-        this.currentAction = code;
-        break;
-      case "ArrowLeft":
-        this.currentAction = code;
-        break;
-      default:
-        return;
-    }*/
-
-
-    //this.snakeDirection.prevECode = code;
   }
 
   readStep() {
-    if (this.currentAction === this.snakeDirection.reverse[this.snakeDirection.prevECode]) {
+    if (
+      this.currentAction ===
+      this.snakeDirection.reverse[this.snakeDirection.prevECode]
+    ) {
       this.currentAction = this.snakeDirection.prevECode;
     }
 
@@ -307,12 +327,13 @@ export class SnakeGame {
     this.gameStarted = false;
     this.gameSpeed = 7;
     this.message = "Press any arrow button to start the game.";
+    this.title = "SNAKE GAME";
     this.snakeDirection.x = 0;
     this.snakeDirection.y = 0;
     this.snakeDirection.prevECode = null;
     this.snakeHeadPos = {
-      x: 10,
-      y: 10,
+      x: Math.floor(this.quantityOfSqInRow / 2),
+      y: Math.floor(this.quantityOfSqInRow / 2),
     };
     this.snakeBody = [];
     this.targets = [];
