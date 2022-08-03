@@ -42,7 +42,7 @@ export class SnakeGame {
   init() {
     window.addEventListener("resize", () => {
       let length = 0;
-      if (window.screen.orientation.type === "landscape-primary") {
+      if (window.screen.width > window.screen.height) {
         length = this.MAIN.getBoundingClientRect().height;
       } else {
         length = this.MAIN.getBoundingClientRect().width;
