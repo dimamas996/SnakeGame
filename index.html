@@ -32,6 +32,18 @@
           );
         },
       };
+      const fullScreenButton = document.querySelector(".full-mode-btn");
+
+      fullScreenButton.addEventListener("click", function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      });
+
       let isMobile = mobileDetection.any();
       import { SnakeGame } from "./index.js";
       let GAME = null;
@@ -39,18 +51,24 @@
         import("./swiped-events.js").then(() => {
           GAME = new SnakeGame(true);
           GAME.init();
-          document.querySelector(".loadscreen").style.display = 'none';
-        }); 
+          document.querySelector(".loadscreen").style.display = "none";
+          fullScreenButton.style.display = "block";
+        });
       } else {
         GAME = new SnakeGame(false);
         GAME.init();
-        document.querySelector(".loadscreen").style.display = 'none';
+        document.querySelector(".loadscreen").style.display = "none";
       }
     </script>
     <title>Document</title>
   </head>
-  <body data-swipe-threshold="10" data-swipe-timeout="150" data-swipe-ignore="false">
+  <body
+    data-swipe-threshold="10"
+    data-swipe-timeout="150"
+    data-swipe-ignore="false"
+  >
     <h1>Snake</h1>
+    <button class="full-mode-btn">Fullscreen Mode</button>
     <div class="main">
       <div class="canvas-wrapper">
         <canvas class="canvas"></canvas>

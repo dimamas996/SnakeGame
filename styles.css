@@ -64,6 +64,32 @@ h1 {
   transform: scale(0.9);
 }
 
+@media screen and (orientation: landscape) {
+  .full-mode-btn {
+    width: 12vh;
+    height: 6vh;
+    font-size: 1.5vh;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  .full-mode-btn {
+    width: 12vw;
+    height: 6vw;
+    font-size: 1.5vw;
+  }
+}
+
+.full-mode-btn {
+  display: none;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: #fc4a4a;
+  border-radius: 15px;
+  color: white;
+}
+
 .main {
   display: flex;
   justify-content: center;
