@@ -83,8 +83,8 @@ h1 {
 .full-mode-btn {
   display: none;
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: 93vh;
+  left: 3vw;
   background-color: #fc4a4a;
   border-radius: 15px;
   color: white;
