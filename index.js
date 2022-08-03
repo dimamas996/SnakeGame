@@ -63,18 +63,6 @@ export class SnakeGame {
     });
 
     if (this.isMobile) {
-      document.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-      })
-
-      document.addEventListener("touchend", (e) => {
-        e.preventDefault();  
-      })
-
-      document.addEventListener("touchmove", (e) => {
-        e.preventDefault();
-      })
-
       document.body.addEventListener('swiped', (e) => {
         let swipeDirection = {
           up: "ArrowUp",
