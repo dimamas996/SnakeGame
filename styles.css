@@ -87,8 +87,15 @@ h1 {
   left: 3vw;
   background-color: #fc4a4a;
   border-radius: 15px;
+  border: 0;
+  outline: 0;
   color: white;
 }
+
+.full-mode-btn:focus {
+  outline: 0;
+}
+
 
 .main {
   display: flex;
@@ -106,7 +113,6 @@ h1 {
   align-content: center;
   align-items: center;
   background-color: #282a31;
-  /* margin: 0; */
   position: absolute;
   left: 0;
   top: 0;
