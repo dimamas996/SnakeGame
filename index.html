@@ -50,13 +50,11 @@
       if (isMobile) {
         import("./swiped-events.js").then(() => {
           GAME = new SnakeGame(true);
-          GAME.init();
           document.querySelector(".loadscreen").style.display = "none";
           fullScreenButton.style.display = "block";
         });
       } else {
         GAME = new SnakeGame(false);
-        GAME.init();
         document.querySelector(".loadscreen").style.display = "none";
       }
     </script>

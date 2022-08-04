@@ -37,9 +37,10 @@ export class SnakeGame {
     };
     this.snakeBody = [];
     this.targets = [];
+    this.#init();
   }
 
-  init() {
+  #init() {
     window.addEventListener("resize", () => {
       let length = 0;
       if (window.screen.width > window.screen.height) {
