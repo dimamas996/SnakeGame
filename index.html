@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./swiped-events.js"></script>
     <script type="module">
       const mobileDetection = {
         Android: function () {
@@ -32,31 +33,11 @@
           );
         },
       };
-      const fullScreenButton = document.querySelector(".full-mode-btn");
 
-      fullScreenButton.addEventListener("click", function toggleFullScreen() {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen();
-        } else {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          }
-        }
+      import("./index.js").then((module) => {
+        new module.default(mobileDetection.any());
+        document.querySelector(".loadscreen").classList.add('loadscreen--hidden');
       });
-
-      let isMobile = mobileDetection.any();
-      import { SnakeGame } from "./index.js";
-      let GAME = null;
-      if (isMobile) {
-        import("./swiped-events.js").then(() => {
-          GAME = new SnakeGame(true);
-          document.querySelector(".loadscreen").style.display = "none";
-          fullScreenButton.style.display = "block";
-        });
-      } else {
-        GAME = new SnakeGame(false);
-        document.querySelector(".loadscreen").style.display = "none";
-      }
     </script>
     <title>Document</title>
   </head>
@@ -66,7 +47,6 @@
     data-swipe-ignore="false"
   >
     <h1>Snake</h1>
-    <button class="full-mode-btn">Fullscreen Mode</button>
     <div class="main">
       <div class="canvas-wrapper">
         <canvas class="canvas"></canvas>
