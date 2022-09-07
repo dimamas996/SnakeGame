@@ -1,4 +1,4 @@
-export default class SnakeGame {
+export class SnakeGame {
   constructor(isMobile = true) {
     this.isMobile = isMobile
     this.CNVS = document.querySelector('.canvas')
